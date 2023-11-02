@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Snake Game</title>
+<style>
+canvas {
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="1000" height="1000"></canvas>
+
+
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Snake configuration
+let snakeSize = 20;
+let snakeSpeed = 150;
+let snake = [{x: 200, y: 200}];
+
+// Food configuration
+let food = {x: 300, y: 300};
+let foodSize = 20;
+
+// Game variables
+let dx = 0;
+let dy = 0;
+let score = 0;
+
+// Game loop
+function gameLoop() {
+    // Calculate the new position of the snake
+    let newX = snake[0].x + dx;
+    let newY = snake[0].y + dy;
+
+    // Move the snake's body to the new position
+    for (let i = snake.length - 1; i > 0; i--) {
+        snake[i].x = snake[i - 1].x;
+        snake[i].y = snake[i - 1].y;
+    }
+    snake[0].x = newX;
+    snake[0].y = newY;
+
+    // Check for collisions with the boundaries
+    if (newX < 0 || newX >= canvas.width || newY < 0 || newY >= canvas.height) {
+        // Reset the game
+        snake = [{x: 200, y: 200}];
+        dx = 0;
+        dy = 0;
+        score = 0;
+    }
+
+    // Check for collisions with the snake itself
+    for (let i = 1; i < snake.length; i++) {
+        if (newX === snake[i].x && newY === snake[i].y) {
+            // Reset the game
+            snake = [{x: 200, y: 200}];
+            dx = 0;
+            dy = 0;
+            score = 0;
+        }
+    }
+
+    // Check for collisions with the food
+    if (newX === food.x && newY === food.y) {
+        // Generate a new random position for the food
+        food.x = Math.floor(Math.random() * (canvas.width / foodSize)) * foodSize;
+        food.y = Math.floor(Math.random() * (canvas.height / foodSize)) * foodSize;
+
+        // Grow the snake
+        snake.push({x: newX, y: newY});
+
+        // Increase the score
+        score++;
+    }
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the snake
+    ctx.fillStyle = 'green';
+    for (let segment of snake) {
+        ctx.fillRect(segment.x, segment.y, snakeSize, snakeSize);
+    }
+
+    // Draw the food
+    ctx.fillStyle = 'red';
+    ctx.fillRect(food.x, food.y, foodSize, foodSize);
+
+    // Draw the score
+    ctx.fillStyle = 'black';
+    ctx.font = '18px Arial';
+    ctx.fillText('Score: ' + score, 10, 20);
+
+    // Update the game
+    setTimeout(gameLoop, snakeSpeed);
+}
+
+// User controls
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowUp' && dy === 0) {
+        dx = 0;
+        dy = -snakeSize;
+    } else if (event.key === 'ArrowDown' && dy === 0) {
+        dx = 0;
+        dy = snakeSize;
+    } else if (event.key === 'ArrowLeft' && dx === 0) {
+        dx = -snakeSize;
+        dy = 0;
+    } else if (event.key === 'ArrowRight' && dx === 0) {
+        dx = snakeSize;
+        dy = 0;
+    }
+});
+
+// Start the game
+gameLoop();
+
+function update() {
+ // Update the snake position, check for collisions, and generate food
+}
+
+function draw() {
+ // Draw the snake, food, and score on the canvas
+}
+
+function move(direction) {
+ // Update the snake's direction
+}
+
+function eat() {
+ // Check if the snake has eaten the food, and grow the snake if it has
+}
+
+</script>
+</body>
+</html>
